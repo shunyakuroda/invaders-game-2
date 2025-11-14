@@ -1,7 +1,26 @@
+/**
+ * @file invaders-game-2/script.js
+ * @author (Your Name)
+ * @see <a href="https://github.com/(Your-GitHub-Username)/invaders-game-2">GitHub Repository</a>
+ * @version 1.0.0
+ * @license MIT
+ */
+
+/**
+ * ゲームの描画に使用するキャンバス要素
+ * @type {HTMLCanvasElement}
+ */
 const canvas = document.getElementById('gameCanvas');
+/**
+ * キャンバスの2Dレンダリングコンテキスト
+ * @type {CanvasRenderingContext2D}
+ */
 const ctx = canvas.getContext('2d');
 
-// Player
+/**
+ * プレイヤーオブジェクト
+ * @type {{x: number, y: number, width: number, height: number, color: string, dx: number}}
+ */
 const player = {
     x: canvas.width / 2 - 15,
     y: canvas.height - 30,
@@ -11,8 +30,15 @@ const player = {
     dx: 5
 };
 
-// Bullets
+/**
+ * 弾丸の配列
+ * @type {Array<Object>}
+ */
 let bullets = [];
+/**
+ * 弾丸オブジェクトのテンプレート
+ * @type {{width: number, height: number, color: string, dy: number}}
+ */
 const bullet = {
     width: 3,
     height: 10,
@@ -20,8 +46,15 @@ const bullet = {
     dy: -7
 };
 
-// Enemies
+/**
+ * 敵の配列
+ * @type {Array<Object>}
+ */
 let enemies = [];
+/**
+ * 敵オブジェクトのテンプレート
+ * @type {{width: number, height: number, color: string, dx: number, dy: number}}
+ */
 const enemy = {
     width: 20,
     height: 20,
@@ -30,12 +63,24 @@ const enemy = {
     dy: 20
 };
 
+/**
+ * 右矢印キーが押されているかどうか
+ * @type {boolean}
+ */
 let rightPressed = false;
+/**
+ * 左矢印キーが押されているかどうか
+ * @type {boolean}
+ */
 let leftPressed = false;
 
 document.addEventListener('keydown', keyDownHandler);
 document.addEventListener('keyup', keyUpHandler);
 
+/**
+ * キーが押されたときのイベントハンドラ
+ * @param {KeyboardEvent} e キーボードイベント
+ */
 function keyDownHandler(e) {
     if (e.key === 'Right' || e.key === 'ArrowRight') {
         rightPressed = true;
@@ -46,6 +91,10 @@ function keyDownHandler(e) {
     }
 }
 
+/**
+ * キーが離されたときのイベントハンドラ
+ * @param {KeyboardEvent} e キーボードイベント
+ */
 function keyUpHandler(e) {
     if (e.key === 'Right' || e.key === 'ArrowRight') {
         rightPressed = false;
@@ -54,6 +103,9 @@ function keyUpHandler(e) {
     }
 }
 
+/**
+ * 敵を生成して配置する
+ */
 function createEnemies() {
     enemies = [];
     for (let c = 0; c < 5; c++) {
@@ -70,6 +122,9 @@ function createEnemies() {
     }
 }
 
+/**
+ * 弾丸を発射する
+ */
 function shoot() {
     bullets.push({
         x: player.x + player.width / 2 - bullet.width / 2,
@@ -81,11 +136,17 @@ function shoot() {
     });
 }
 
+/**
+ * プレイヤーを描画する
+ */
 function drawPlayer() {
     ctx.fillStyle = player.color;
     ctx.fillRect(player.x, player.y, player.width, player.height);
 }
 
+/**
+ * 弾丸を描画する
+ */
 function drawBullets() {
     bullets.forEach(b => {
         ctx.fillStyle = b.color;
@@ -93,6 +154,9 @@ function drawBullets() {
     });
 }
 
+/**
+ * 敵を描画する
+ */
 function drawEnemies() {
     enemies.forEach(e => {
         ctx.fillStyle = e.color;
@@ -100,15 +164,18 @@ function drawEnemies() {
     });
 }
 
+/**
+ * ゲームの状態を更新する
+ */
 function update() {
-    // Move player
+    // プレイヤーの移動
     if (rightPressed && player.x < canvas.width - player.width) {
         player.x += player.dx;
     } else if (leftPressed && player.x > 0) {
         player.x -= player.dx;
     }
 
-    // Move bullets
+    // 弾丸の移動
     bullets.forEach((b, i) => {
         b.y += b.dy;
         if (b.y < 0) {
@@ -116,7 +183,7 @@ function update() {
         }
     });
 
-    // Move enemies
+    // 敵の移動
     let edge = false;
     enemies.forEach(e => {
         e.x += e.dx;
@@ -132,7 +199,7 @@ function update() {
         });
     }
 
-    // Collision detection
+    // 衝突検出
     bullets.forEach((b, bi) => {
         enemies.forEach((e, ei) => {
             if (b.x < e.x + e.width &&
@@ -145,7 +212,7 @@ function update() {
         });
     });
 
-    // Game over
+    // ゲームオーバー
     enemies.forEach(e => {
         if (e.y + e.height > player.y) {
             alert('ゲームオーバー');
@@ -159,6 +226,9 @@ function update() {
     }
 }
 
+/**
+ * ゲーム画面を描画する
+ */
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawPlayer();
@@ -166,6 +236,9 @@ function draw() {
     drawEnemies();
 }
 
+/**
+ * ゲームループ
+ */
 function gameLoop() {
     update();
     draw();
